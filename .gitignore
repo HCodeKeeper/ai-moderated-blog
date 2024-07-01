@@ -244,3 +244,7 @@ fabric.properties
 
 # MacOS files
 .DS_Store
+
+# Migrations
+**/migrations/*
+!**/migrations/__init__.py
