@@ -3,7 +3,7 @@ WORKDIR /ai_blog
 # Copying shell scripts
 COPY compose/local/ ./
 
-COPY src/ ./src/
+COPY ./src/ ./
 
 COPY requirements.txt ./
 
