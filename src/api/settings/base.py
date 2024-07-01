@@ -22,8 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = Env()
 env_file_path = BASE_DIR.parent / ".env"
-if os.path.exists(env_file_path):
-    env.read_env(env_file=env_file_path)
+
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
+
+if READ_DOT_ENV_FILE:
+    if os.path.exists(env_file_path):
+        env.read_env(env_file=env_file_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
