@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "ai-moderated-blog"
+version = "0.1.0"
+description = ""
+authors = ["HCodeKeeper <ivannikovmax04@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.0.6"
+django-ninja = "^1.2.0"
+django-environ = "^0.11.2"
+django-cors-headers = "^4.4.0"
+psycopg2 = "^2.9.9"
+pytest-django = "^4.8.0"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.7.1"
+commitizen = "^3.27.0"
+black = "^24.4.2"
+isort = "^5.13.2"
+flake8 = "^7.1.0"
+bandit = "^1.7.9"
+coverage = "^7.5.4"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.2.2"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version = "0.2.0a19"
+version_scheme = "pep440"
+version_provider = "poetry"
+major_version_zero = true
+version_files = ["pyproject.toml:version"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
