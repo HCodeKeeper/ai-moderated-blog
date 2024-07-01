@@ -15,7 +15,7 @@ from pathlib import Path
 
 from environ import Env
 
-from src.utils.db_config import get_config
+from utils.db_config import get_config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
