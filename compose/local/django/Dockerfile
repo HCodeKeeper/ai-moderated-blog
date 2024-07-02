@@ -23,8 +23,8 @@ RUN apt-get update \
 RUN pip install -r requirements.txt
 
 RUN sed -i 's/\r$//g' ./entrypoint.sh
-RUN chmod 755 ./entrypoint.sh
+RUN chmod 777 ./entrypoint.sh
 
 RUN sed -i 's/\r$//g' start
-RUN chmod 755 ./start
+RUN chmod 777 ./start
 ENTRYPOINT ["./entrypoint.sh"]
