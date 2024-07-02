@@ -43,13 +43,16 @@ DJANGO_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "custom_users",
 ]
 
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    "ninja",
+]
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    "custom_users",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 

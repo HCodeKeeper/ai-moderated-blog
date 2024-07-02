@@ -1,13 +1,10 @@
 from typing import ClassVar
 
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinLengthValidator
 from django.db.models import EmailField
 from django.utils.translation import gettext_lazy as _
 
 from custom_users.managers import UserManager
-
-EMAIL_MIN_LENGTH = 3
 
 
 class User(AbstractUser):
@@ -22,13 +19,6 @@ class User(AbstractUser):
     email = EmailField(
         _("email address"),
         unique=True,
-        validators=[
-            MinLengthValidator(
-                EMAIL_MIN_LENGTH,
-                f"the field must contain at least {EMAIL_MIN_LENGTH} characters",
-            )
-        ],
-        max_length=255,
         default=None,
     )
 

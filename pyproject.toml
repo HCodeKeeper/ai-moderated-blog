@@ -27,6 +27,11 @@ coverage = "^7.5.4"
 [tool.poetry.group.test.dependencies]
 pytest = "^8.2.2"
 
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = 'src.api.settings.local'
+python_files = ['tests.py', 'test_*.py', '*_tests.py']
+pythonpath = '. src'
+
 [tool.commitizen]
 name = "cz_conventional_commits"
 tag_format = "$version"
