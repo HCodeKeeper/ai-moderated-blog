@@ -48,6 +48,8 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "ninja",
+    "ninja_extra",
+    "ninja_jwt",
 ]
 
 LOCAL_APPS = [

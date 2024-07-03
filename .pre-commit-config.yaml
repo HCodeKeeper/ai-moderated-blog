@@ -61,7 +61,7 @@ repos:
         args: ['-p no:warnings']
         verbose: true
         pass_filenames: false
-        stages: [pre-commit, pre-push]
+        stages: [pre-push]
         fail_fast: true
 
   - repo: local
