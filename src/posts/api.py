@@ -20,7 +20,7 @@ class PostsController(ControllerBase):
     @paginate()
     def list_posts(self, request):
         """
-        List all not blocked posts
+        List all posts
 
         """
         return Post.objects.all()
