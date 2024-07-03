@@ -34,6 +34,10 @@ pytest = "^8.2.2"
 DJANGO_SETTINGS_MODULE = 'src.api.settings.local'
 python_files = ['tests.py', 'test_*.py', '*_tests.py']
 pythonpath = '. src'
+filterwarnings = [
+    "ignore::DeprecationWarning:pydantic.*:",
+    "ignore::DeprecationWarning:ninja.orm.metaclass:90"
+]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
