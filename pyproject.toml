@@ -15,6 +15,8 @@ django-cors-headers = "^4.4.0"
 psycopg2 = "^2.9.9"
 pytest-django = "^4.8.0"
 flake8-pyproject = "^1.2.3"
+django-ninja-jwt = "^5.3.1"
+django-ninja-extra = "^0.21.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.7.1"
@@ -32,6 +34,10 @@ pytest = "^8.2.2"
 DJANGO_SETTINGS_MODULE = 'src.api.settings.local'
 python_files = ['tests.py', 'test_*.py', '*_tests.py']
 pythonpath = '. src'
+filterwarnings = [
+    "ignore::DeprecationWarning:pydantic.*:",
+    "ignore::DeprecationWarning:ninja.orm.metaclass:90"
+]
 
 [tool.commitizen]
 name = "cz_conventional_commits"

@@ -1,5 +1,11 @@
-from ninja import NinjaAPI
+from ninja_extra import NinjaExtraAPI
 
-api = NinjaAPI(title="AI Moderated Blog API")
+from auth.api import AuthController
+from custom_users.api import UsersController
 
-api.add_router("users/", "custom_users.api.router")
+api = NinjaExtraAPI(title="AI Moderated Blog API")
+
+api.register_controllers(
+    AuthController,
+    UsersController,
+)
