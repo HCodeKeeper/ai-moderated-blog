@@ -53,11 +53,16 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "authentication",
     "custom_users",
+    "posts",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
+NINJA_EXTRA = {
+    "PAGINATION_MAX_LIMIT": 50,
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

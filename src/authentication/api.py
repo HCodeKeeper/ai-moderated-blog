@@ -3,7 +3,7 @@ from ninja_extra import api_controller, http_post
 from ninja_jwt.controller import TokenObtainPairController, TokenVerificationController
 from ninja_jwt.controller import schema as jwt_schema
 
-from auth.schemas import RegisterUserSchema
+from authentication.schemas import RegisterUserSchema
 from custom_users.schemas import UserOutSchema
 
 
