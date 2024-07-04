@@ -2,7 +2,7 @@ import pytest
 from ninja_extra.testing import TestClient
 from ninja_jwt.controller import schema as jwt_schema
 
-from auth.api import AuthController
+from authentication.api import AuthController
 from custom_users.schemas import UserOutSchema
 
 

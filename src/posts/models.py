@@ -3,7 +3,12 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models.fields import CharField, DateTimeField, TextField
 
-from posts.exceptions import AnonymousReplyError, CommentWithoutAuthorCreationError, PostWithoutAuthorCreationError
+from posts.exceptions import (
+    AnonymousReplyError,
+    CommentWithoutAuthorCreationError,
+    PostWithoutAuthorCreationError,
+    SelfReplyingError,
+)
 
 MIN_COMMENT_LENGTH = 1
 MAX_COMMENT_LENGTH = 500
@@ -17,7 +22,6 @@ class Post(models.Model):
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True)
-    is_blocked = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -29,6 +33,7 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.__validate_author_exists_on_creation()
+
         super().save(*args, **kwargs)
 
     class Meta:
@@ -67,7 +72,6 @@ class Reply(models.Model):
         "self", on_delete=models.CASCADE, related_name="child_replies", null=True, blank=True
     )
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
-    blocked = models.BooleanField(default=False)
     is_ai_generated = models.BooleanField(default=False)
 
     def __str__(self):
@@ -78,6 +82,9 @@ class Reply(models.Model):
     def save(self, *args, **kwargs):
         if self.author is None and not self.is_ai_generated:
             raise AnonymousReplyError()
+        if self.parent_reply_id and self.parent_reply_id == self.id:
+            raise SelfReplyingError()
+
         super().save(*args, **kwargs)
 
     class Meta:

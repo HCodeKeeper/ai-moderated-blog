@@ -62,6 +62,9 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 NINJA_EXTRA = {
     "PAGINATION_MAX_LIMIT": 50,
+    "INJECTOR_MODULES": [
+        "posts.modules.PostsModule",
+    ],
 }
 
 MIDDLEWARE = [
@@ -126,7 +129,6 @@ AUTH_PASSWORD_VALIDATORS = [
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
