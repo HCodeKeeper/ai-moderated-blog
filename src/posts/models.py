@@ -16,7 +16,14 @@ MIN_TITLE_LENGTH = 5
 MAX_TITLE_LENGTH = 100
 
 
-class Post(models.Model):
+class BlockableContent(models.Model):
+    is_blocked = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
+class Post(BlockableContent):
     title = CharField(max_length=MAX_TITLE_LENGTH, validators=[MinLengthValidator(MIN_TITLE_LENGTH)])
     content = TextField()
     created_at = DateTimeField(auto_now_add=True)
@@ -40,7 +47,7 @@ class Post(models.Model):
         ordering = ("-created_at",)
 
 
-class Comment(models.Model):
+class Comment(BlockableContent):
     content = CharField(max_length=500, validators=[MinLengthValidator(MIN_COMMENT_LENGTH)])
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
@@ -63,7 +70,7 @@ class Comment(models.Model):
         ordering = ("-created_at",)
 
 
-class Reply(models.Model):
+class Reply(BlockableContent):
     content = models.TextField(validators=[MinLengthValidator(MIN_COMMENT_LENGTH)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

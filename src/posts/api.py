@@ -38,10 +38,26 @@ class PostsController(ControllerBase):
         """
         return self.posts_service.list()
 
+    @http_get("active", response=NinjaPaginationResponseSchema[PostOutSchema])
+    @paginate()
+    def list_active_posts(self, request):
+        """
+        List all active posts
+
+        """
+        return self.posts_service.list_active()
+
     @http_get("{int:post_id}", response=PostOutSchema)
     def get_post(self, request, post_id: int):
         try:
             return self.posts_service.get(post_id)
+        except Post.DoesNotExist as e:
+            raise NotFound() from e
+
+    @http_get("blocked/{int:post_id}", response=PostOutSchema)
+    def get_blocked_post(self, request, post_id: int):
+        try:
+            return self.posts_service.get_inactive(post_id)
         except Post.DoesNotExist as e:
             raise NotFound() from e
 
@@ -116,10 +132,32 @@ class CommentsController(ControllerBase):
     def list_comments(self, request):
         return self.comments_service.list()
 
+    @http_get("active", response=NinjaPaginationResponseSchema[CommentOutSchema])
+    @paginate()
+    def list_active_comments(self, request):
+        return self.comments_service.list_active()
+
+    @http_get("blocked/post/{int:post_id}", response=CommentOutSchema)
+    @paginate()
+    def list_blocked_of_post_comments(self, request, post_id: int):
+        return self.comments_service.list_inactive_by_post(post_id)
+
+    @http_get("active/post/{int:post_id}", response=CommentOutSchema)
+    @paginate()
+    def list_active_of_post_comments(self, request, post_id: int):
+        return self.comments_service.list_active_by_post(post_id)
+
     @http_get("{int:comment_id}", response=CommentOutSchema)
     def get_comment(self, request, comment_id: int):
         try:
             return self.comments_service.get(comment_id)
+        except Comment.DoesNotExist as e:
+            raise NotFound() from e
+
+    @http_get("blocked/{int:comment_id}", response=CommentOutSchema)
+    def get_blocked_comment(self, request, comment_id: int):
+        try:
+            return self.comments_service.get_inactive(comment_id)
         except Comment.DoesNotExist as e:
             raise NotFound() from e
 

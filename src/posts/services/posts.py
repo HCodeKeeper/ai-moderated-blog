@@ -1,16 +1,23 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from django.contrib.auth import get_user_model
 
-from api.services import AbstractService
-from posts.exceptions import EntityDoesNotExistError
+from posts.exceptions import ContentContainsProfanityError, EntityDoesNotExistError
 from posts.models import Post
 from posts.schemas.posts import PostCreateSchema, PostUpdateSchema
+from posts.services.profanity import detect_profanity
+from posts.services.services import AbstractService
 from posts.validators import validate_post_title, validate_profanity
 
 
 class AbstractPostsService(AbstractService, ABC):
-    pass
+    @abstractmethod
+    def get_inactive(self, _id: int):
+        pass
+
+    @abstractmethod
+    def list_active(self):
+        pass
 
 
 class PostsService(AbstractPostsService):
@@ -20,25 +27,33 @@ class PostsService(AbstractPostsService):
     def list(self):
         return Post.objects.all()
 
+    def list_active(self):
+        return Post.objects.filter(is_blocked=False)
+
     def get(self, _id: int):
-        return Post.objects.get(id=_id)
+        return Post.objects.get(id=_id, is_blocked=False)
+
+    def get_inactive(self, _id: int):
+        return Post.objects.get(id=_id, is_blocked=True)
 
     def create(self, schema: PostCreateSchema):
         validate_post_title(schema.title)
-        validate_profanity([schema.title, schema.content])
+        has_profanity = detect_profanity([schema.title, schema.content])
 
         try:
             get_user_model().objects.get(id=schema.author_id)
         except get_user_model().DoesNotExist as e:
             raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id) from e
-
-        return Post.objects.create(**schema.dict())
+        post = Post.objects.create(**schema.dict(), is_blocked=has_profanity)
+        if has_profanity:
+            raise ContentContainsProfanityError()
+        return post
 
     def update(self, _id: int, schema: PostUpdateSchema):
-        post = Post.objects.get(id=_id)
+        post = Post.objects.get(id=_id, is_blocked=False)
 
         validate_post_title(schema.title)
-        validate_profanity([schema.title, schema.content])
+        validate_profanity([schema.content, schema.title])
 
         post_data_dict = schema.dict()
         for key, value in post_data_dict.items():
@@ -47,5 +62,5 @@ class PostsService(AbstractPostsService):
         post.save()
 
     def delete(self, _id: int):
-        post = Post.objects.get(id=_id)
+        post = Post.objects.get(id=_id, is_blocked=False)
         post.delete()

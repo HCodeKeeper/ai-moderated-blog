@@ -18,7 +18,7 @@ class PostUpdateSchema(ModelSchema):
 
     class Meta:
         model = Post
-        exclude = ["id", "author", "created_at", "updated_at"]
+        exclude = ["id", "author", "created_at", "updated_at", "is_blocked"]
 
 
 class PostCreateSchema(ModelSchema):
