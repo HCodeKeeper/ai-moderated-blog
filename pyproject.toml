@@ -15,6 +15,8 @@ django-cors-headers = "^4.4.0"
 psycopg2 = "^2.9.9"
 django-ninja-jwt = "^5.3.1"
 django-ninja-extra = "^0.21.0"
+alt-profanity-check = "^1.5.0"
+ninja-schema = "^0.13.6"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.7.1"
@@ -52,6 +54,9 @@ version_files = ["pyproject.toml:version"]
 exclude = [
     "*/migrations/*",
 ]
+
+[tool.isort]
+profile = "black"
 
 [build-system]
 requires = ["poetry-core"]
