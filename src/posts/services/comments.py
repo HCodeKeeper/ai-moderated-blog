@@ -23,10 +23,7 @@ class CommentsService(AbstractCommentsService):
         return Comment.objects.all()
 
     def list_by_post(self, post_id: int):
-        try:
-            post = Post.objects.get(id=post_id)
-        except Post.DoesNotExist as e:
-            raise EntityDoesNotExistError(entity_name="Post", entity_id=post_id) from e
+        post = Post.objects.get(id=post_id)
         return post.comment_set.all()
 
     def get(self, _id: int):

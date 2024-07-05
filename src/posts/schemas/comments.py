@@ -1,4 +1,5 @@
 from ninja import ModelSchema, Schema
+from ninja_schema import model_validator
 
 from posts.models import Comment
 from posts.schemas.general import AuthorSchema
@@ -17,6 +18,18 @@ class CommentCreateSchema(Schema):
     post_id: int
     content: str
 
+    @model_validator("content", check_fields=False)
+    def content_not_empty(cls, v):
+        if not v.strip():
+            raise ValueError("Content cannot be empty")
+        return v
+
 
 class CommentUpdateSchema(Schema):
     content: str
+
+    @model_validator("content", check_fields=False)
+    def content_not_empty(cls, v):
+        if not v.strip():
+            raise ValueError("Content cannot be empty")
+        return v
