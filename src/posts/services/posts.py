@@ -1,33 +1,12 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from django.contrib.auth import get_user_model
 
+from api.services import AbstractService
 from posts.exceptions import EntityDoesNotExistError
 from posts.models import Post
 from posts.schemas.posts import PostCreateSchema, PostUpdateSchema
 from posts.validators import validate_post_title, validate_profanity
-
-
-class AbstractService(ABC):
-    @abstractmethod
-    def list(self):
-        pass
-
-    @abstractmethod
-    def create(self, schema):
-        pass
-
-    @abstractmethod
-    def get(self, _id: int):
-        pass
-
-    @abstractmethod
-    def update(self, _id: int, schema):
-        pass
-
-    @abstractmethod
-    def delete(self, _id: int):
-        pass
 
 
 class AbstractPostsService(AbstractService, ABC):
