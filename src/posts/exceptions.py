@@ -1,4 +1,7 @@
-from ninja_extra.exceptions import ValidationError
+from typing import Dict, List, Optional, Union
+
+from ninja_extra import status
+from ninja_extra.exceptions import APIException, ValidationError
 
 import posts.models
 
@@ -54,5 +57,39 @@ class ContentContainsProfanityError(ValidationError):
 
 class EntityDoesNotExistError(ValidationError):
     def __init__(self, entity_name: str, entity_id: id, message=None):
-        self.message = message or f"{entity_name} with id {entity_id} does not exist."
+        self.entity_name = entity_name
+        self.entity_id = entity_id
+        self.message = message or f"{self.entity_name} with id {self.entity_id} does not exist."
         super().__init__(self.message)
+
+
+class InvalidRequestBodyError(APIException):
+    status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+    default_detail = "Invalid request body."
+
+    def __init__(
+        self,
+        detail: Optional[Union[List, Dict, "ErrorDetail", str]] = None,  # noqa
+        code: Optional[Union[str, int]] = None,
+    ) -> None:
+        self.default_detail = detail or self.default_detail
+        super().__init__(detail=self.default_detail, code=code or self.status_code)
+
+
+class RelatedObjectDoesNotExistAPIError(InvalidRequestBodyError):
+    def __init__(self, entity_name: str, entity_id: int, message=None):
+        self.entity_name = entity_name
+        self.entity_id = entity_id
+        self.default_detail = (
+            "Related object {entity_name} with id {entity_id} does not exist.".format(
+                entity_name=self.entity_name, entity_id=self.entity_id
+            )
+            or self.default_detail
+        )
+        super().__init__(detail=message or self.default_detail)
+
+
+class ContentContainsProfanityAPIError(InvalidRequestBodyError):
+    def __init__(self, message="Content contains profanity."):
+        self.message = message
+        super().__init__(detail=self.message)

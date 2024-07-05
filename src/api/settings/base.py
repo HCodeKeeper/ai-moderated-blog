@@ -64,6 +64,7 @@ NINJA_EXTRA = {
     "PAGINATION_MAX_LIMIT": 50,
     "INJECTOR_MODULES": [
         "posts.modules.PostsModule",
+        "posts.modules.CommentsModule",
     ],
 }
 

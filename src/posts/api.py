@@ -5,12 +5,18 @@ from ninja_extra.schemas import NinjaPaginationResponseSchema
 from ninja_jwt.authentication import JWTAuth
 
 from api.schemas import DetailSchema
-from posts.exceptions import ContentContainsProfanityError, EntityDoesNotExistError, InvalidTitleLengthError
+from posts.exceptions import (
+    ContentContainsProfanityError,
+    EntityDoesNotExistError,
+    InvalidTitleLengthError,
+    RelatedObjectDoesNotExistAPIError,
+)
 from posts.models import Comment, Post, Reply
 from posts.permissions import IsAuthor
 from posts.schemas.comments import CommentCreateSchema, CommentOutSchema, CommentUpdateSchema
 from posts.schemas.posts import PostCreateSchema, PostOutSchema, PostUpdateSchema
 from posts.schemas.replies import ReplyCreateSchema, ReplyOutSchema, ReplyUpdateSchema
+from posts.services.comments import AbstractCommentsService
 from posts.services.posts import AbstractPostsService
 
 
@@ -89,37 +95,80 @@ class PostsController(ControllerBase):
 
 @api_controller("comments", tags=["comments"])
 class CommentsController(ControllerBase):
-    @http_get("post/{int:post_id}", response=NinjaPaginationResponseSchema[CommentOutSchema])
+
+    def __init__(self, comments_service: AbstractCommentsService):
+        self.comments_service = comments_service
+
+    @http_get(
+        "post/{int:post_id}",
+        response={
+            200: NinjaPaginationResponseSchema[CommentOutSchema],
+            404: DetailSchema,
+        },
+    )
     @paginate()
     def list_comments_of_post(self, request, post_id: int):
-        return get_object_or_404(Post, id=post_id).comment_set.all()
+        try:
+            return self.comments_service.list_by_post(post_id)
+        except EntityDoesNotExistError as e:
+            raise RelatedObjectDoesNotExistAPIError(entity_name=e.entity_name, entity_id=e.entity_id)
 
     @http_get("", response=NinjaPaginationResponseSchema[CommentOutSchema])
     @paginate()
     def list_comments(self, request):
-        return Comment.objects.all()
+        return self.comments_service.list()
 
     @http_get("{int:comment_id}", response=CommentOutSchema)
     def get_comment(self, request, comment_id: int):
-        return get_object_or_404(Comment, id=comment_id)
+        try:
+            return self.comments_service.get(comment_id)
+        except Comment.DoesNotExist:
+            return self.create_response(
+                {"detail": f"Comment not found | id: {comment_id}"}, status_code=status.HTTP_404_NOT_FOUND
+            )
 
-    @http_post(response=CommentOutSchema)
+    @http_post(
+        response={
+            200: CommentOutSchema,
+            201: CommentOutSchema,
+            422: DetailSchema,
+        }
+    )
     def create_comment(self, data: CommentCreateSchema):
-        return Comment.objects.create(**data.dict())
+        try:
+            return self.comments_service.create(data)
+        except ContentContainsProfanityError as e:
+            return 422, {"detail": e.message}
+        except EntityDoesNotExistError as e:
+            return 422, {"detail": e.message}
 
-    @http_put("{int:comment_id}", response=CommentOutSchema)
+    @http_put(
+        "{int:comment_id}",
+        response={
+            200: CommentOutSchema,
+            422: DetailSchema,
+        },
+    )
     def update_comment(self, comment_id: int, data: CommentUpdateSchema):
+        try:
+            self.comments_service.update(comment_id, data)
+        except ContentContainsProfanityError as e:
+            return 422, {"detail": e.message}
+        except Comment.DoesNotExist:
+            return self.create_response(
+                {"detail": f"Comment not found | id: {comment_id}"}, status_code=status.HTTP_404_NOT_FOUND
+            )
         comment = get_object_or_404(Comment, id=comment_id)
-        comment_data_dict = data.dict()
-        for key, value in comment_data_dict.items():
-            setattr(comment, key, value)
-        comment.save()
         return comment
 
     @http_delete("{int:comment_id}")
     def delete_comment(self, comment_id: int):
-        comment = get_object_or_404(Comment, id=comment_id)
-        comment.delete()
+        try:
+            self.comments_service.delete(comment_id)
+        except Comment.DoesNotExist:
+            return self.create_response(
+                {"detail": f"Comment not found | id: {comment_id}"}, status_code=status.HTTP_404_NOT_FOUND
+            )
         return self.create_response("", status_code=status.HTTP_204_NO_CONTENT)
 
 
