@@ -127,7 +127,8 @@ class CommentsController(ControllerBase):
         response={
             200: CommentOutSchema,
             201: CommentOutSchema,
-        }
+        },
+        auth=JWTAuth(),
     )
     def create_comment(self, data: CommentCreateSchema):
         try:
@@ -142,6 +143,8 @@ class CommentsController(ControllerBase):
         response={
             200: CommentOutSchema,
         },
+        permissions=[IsAuthor | IsAdminUser],
+        auth=JWTAuth(),
     )
     def update_comment(self, comment_id: int, data: CommentUpdateSchema):
         try:
@@ -153,7 +156,11 @@ class CommentsController(ControllerBase):
         comment = Comment.objects.get(id=comment_id)
         return comment
 
-    @http_delete("{int:comment_id}")
+    @http_delete(
+        "{int:comment_id}",
+        permissions=[IsAuthor | IsAdminUser],
+        auth=JWTAuth(),
+    )
     def delete_comment(self, comment_id: int):
         try:
             self.comments_service.delete(comment_id)
