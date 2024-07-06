@@ -80,7 +80,7 @@ class CommentsService(AbstractCommentsService):
         return comment
 
     def update(self, _id: int, schema: CommentUpdateSchema):
-        comment = Comment.objects.get(id=_id)
+        comment = Comment.objects.get(id=_id, is_blocked=False)
 
         validate_comment_length(schema.content)
         validate_profanity([schema.content])
