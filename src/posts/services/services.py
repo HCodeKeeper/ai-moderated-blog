@@ -7,6 +7,10 @@ class AbstractService(ABC):
         pass
 
     @abstractmethod
+    def list_active(self):
+        pass
+
+    @abstractmethod
     def create(self, schema):
         pass
 

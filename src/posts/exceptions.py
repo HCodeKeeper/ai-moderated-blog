@@ -36,7 +36,20 @@ class SelfReplyingError(ValidationError):
         super().__init__(self.message)
 
 
-class InvalidTitleLengthError(ValidationError):
+class InvalidContentLengthError(ValidationError):
+    def __init__(self, length=None, _min=None, _max=None, message=None):
+        self.max = _min
+        self.min = _max
+        self.length = length
+        self.message = message or f"Content must be between {self.min} and {self.max} characters long."
+
+        if self.length:
+            self.message += f" | Received: {self.length}"
+
+        super().__init__(self.message)
+
+
+class InvalidTitleLengthError(InvalidContentLengthError):
     def __init__(self, length=None, message=None):
         self.max = posts.models.MAX_TITLE_LENGTH
         self.min = posts.models.MIN_TITLE_LENGTH
@@ -46,7 +59,7 @@ class InvalidTitleLengthError(ValidationError):
         if self.length:
             self.message += f" | Received: {self.length}"
 
-        super().__init__(self.message)
+        super().__init__(self.length, self.min, self.max, self.message)
 
 
 class ContentContainsProfanityError(ValidationError):
