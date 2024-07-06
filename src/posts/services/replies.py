@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from django.contrib.auth import get_user_model
+from django.db.models import Prefetch
 
 from posts.exceptions import ContentContainsProfanityError, EntityDoesNotExistError
 from posts.models import Comment, Reply
@@ -44,16 +45,28 @@ class RepliesService(AbstractRepliesService):
         return Reply.objects.all()
 
     def list_active_by_comment(self, comment_id: int):
-        comment = Comment.objects.get(id=comment_id)
-        return comment.replies.filter(is_blocked=False)
+        if not Comment.objects.filter(id=comment_id).exists():
+            raise Comment.DoesNotExist(f"Comment with id {comment_id} does not exist.")
+
+        comment = Comment.objects.prefetch_related(
+            Prefetch("replies", queryset=Reply.objects.filter(is_blocked=False))
+        ).get(id=comment_id)
+        return comment.replies.all()
 
     def list_by_comment(self, comment_id: int):
-        comment = Comment.objects.get(id=comment_id)
+        if not Comment.objects.filter(id=comment_id).exists():
+            raise Comment.DoesNotExist(f"Comment with id {comment_id} does not exist.")
+        comment = Comment.objects.prefetch_related("replies").get(id=comment_id)
         return comment.replies.all()
 
     def list_inactive_by_comment(self, comment_id: int):
-        comment = Comment.objects.get(id=comment_id)
-        return comment.replies.filter(is_blocked=True)
+        if not Comment.objects.filter(id=comment_id).exists():
+            raise Comment.DoesNotExist(f"Comment with id {comment_id} does not exist.")
+
+        comment = Comment.objects.prefetch_related(
+            Prefetch("replies", queryset=Reply.objects.filter(is_blocked=True))
+        ).get(id=comment_id)
+        return comment.replies.all()
 
     def get(self, _id: int):
         return Reply.objects.get(id=_id, is_blocked=False)
@@ -65,24 +78,22 @@ class RepliesService(AbstractRepliesService):
         validate_comment_length(schema.content)
         has_profanity = detect_profanity([schema.content])
 
-        try:
-            comment = Comment.objects.get(id=schema.comment_id, is_blocked=False)
-        except Comment.DoesNotExist as e:
-            raise EntityDoesNotExistError(entity_name="Comment", entity_id=schema.comment_id) from e
-        try:
-            author = get_user_model().objects.get(id=schema.author_id)
-        except get_user_model().DoesNotExist as e:
-            raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id) from e
+        if not Comment.objects.filter(id=schema.comment_id, is_blocked=False).exists():
+            raise EntityDoesNotExistError(entity_name="Comment", entity_id=schema.comment_id)
 
-        parent_reply = None
+        if not get_user_model().objects.filter(id=schema.author_id).exists():
+            raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id)
+
         if schema.parent_reply_id:
-            try:
-                parent_reply = Reply.objects.get(id=schema.parent_reply_id, is_blocked=False)
-            except Reply.DoesNotExist as e:
-                raise EntityDoesNotExistError(entity_name="Parent Reply", entity_id=schema.parent_reply_id) from e
+            if not Reply.objects.filter(id=schema.parent_reply_id, is_blocked=False).exists():
+                raise EntityDoesNotExistError(entity_name="Parent Reply", entity_id=schema.parent_reply_id)
 
         reply = Reply.objects.create(
-            comment=comment, author=author, content=schema.content, is_blocked=has_profanity, parent_reply=parent_reply
+            comment_id=schema.comment_id,
+            author_id=schema.author_id,
+            content=schema.content,
+            is_blocked=has_profanity,
+            parent_reply_id=schema.parent_reply_id,
         )
         if has_profanity:
             raise ContentContainsProfanityError()
@@ -107,10 +118,10 @@ class RepliesService(AbstractRepliesService):
     def create_ai_reply(self, schema: AIReplyCreateSchema):
         validate_comment_length(schema.content)
 
-        try:
-            comment = Comment.objects.get(id=schema.comment_id, is_blocked=False)
-        except Comment.DoesNotExist as e:
-            raise EntityDoesNotExistError(entity_name="Comment", entity_id=schema.comment_id) from e
+        if not Comment.objects.filter(id=schema.comment_id, is_blocked=False).exists():
+            raise EntityDoesNotExistError(entity_name="Comment", entity_id=schema.comment_id)
 
-        reply = Reply.objects.create(comment=comment, content=schema.content, is_blocked=False, is_ai_generated=True)
+        reply = Reply.objects.create(
+            comment_id=schema.comment_id, content=schema.content, is_blocked=False, is_ai_generated=True
+        )
         return reply

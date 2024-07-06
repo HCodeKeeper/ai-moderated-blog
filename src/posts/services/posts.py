@@ -40,10 +40,9 @@ class PostsService(AbstractPostsService):
         validate_post_title(schema.title)
         has_profanity = detect_profanity([schema.title, schema.content])
 
-        try:
-            get_user_model().objects.get(id=schema.author_id)
-        except get_user_model().DoesNotExist as e:
-            raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id) from e
+        if not get_user_model().objects.filter(id=schema.author_id).exists():
+            raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id)
+
         post = Post.objects.create(**schema.dict(), is_blocked=has_profanity)
         if has_profanity:
             raise ContentContainsProfanityError()
