@@ -66,17 +66,18 @@ class CommentsService(AbstractCommentsService):
         has_profanity = detect_profanity([schema.content])
 
         try:
-            Post.objects.get(id=schema.post_id, is_blocked=False)
+            post = Post.objects.get(id=schema.post_id, is_blocked=False)
         except Post.DoesNotExist as e:
             raise EntityDoesNotExistError(entity_name="Post", entity_id=schema.post_id) from e
         try:
-            get_user_model().objects.get(id=schema.author_id)
+            author = get_user_model().objects.get(id=schema.author_id)
         except get_user_model().DoesNotExist as e:
             raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id) from e
 
-        Comment.objects.create(**schema.dict(), is_blocked=has_profanity)
+        comment = Comment.objects.create(post=post, author=author, content=schema.content, is_blocked=has_profanity)
         if has_profanity:
             raise ContentContainsProfanityError()
+        return comment
 
     def update(self, _id: int, schema: CommentUpdateSchema):
         comment = Comment.objects.get(id=_id)

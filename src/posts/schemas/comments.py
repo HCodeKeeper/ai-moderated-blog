@@ -1,4 +1,5 @@
-from ninja import ModelSchema, Schema
+from ninja import ModelSchema
+from ninja_schema import Schema
 from pydantic import field_validator
 
 from posts.exceptions import InvalidContentLengthError
