@@ -65,6 +65,7 @@ NINJA_EXTRA = {
     "INJECTOR_MODULES": [
         "posts.modules.PostsModule",
         "posts.modules.CommentsModule",
+        "posts.modules.RepliesModule",
     ],
 }
 
