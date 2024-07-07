@@ -17,6 +17,7 @@ django-ninja-jwt = "^5.3.1"
 django-ninja-extra = "^0.21.0"
 alt-profanity-check = "^1.5.0"
 ninja-schema = "^0.13.6"
+faker = "^26.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.7.1"

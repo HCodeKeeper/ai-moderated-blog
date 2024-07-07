@@ -56,6 +56,7 @@ LOCAL_APPS = [
     "authentication",
     "custom_users",
     "posts",
+    "analytics",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -66,6 +67,7 @@ NINJA_EXTRA = {
         "posts.modules.PostsModule",
         "posts.modules.CommentsModule",
         "posts.modules.RepliesModule",
+        "analytics.modules.CommentsAnalyticsModule",
     ],
 }
 

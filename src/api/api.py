@@ -1,5 +1,6 @@
 from ninja_extra import NinjaExtraAPI
 
+from analytics.api import CommentsAnalyticsAPI
 from authentication.api import AuthController
 from custom_users.api import UsersController
 from posts.api import CommentsController, PostsController, RepliesController
@@ -12,4 +13,5 @@ api.register_controllers(
     PostsController,
     CommentsController,
     RepliesController,
+    CommentsAnalyticsAPI,
 )
