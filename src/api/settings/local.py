@@ -12,6 +12,31 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "Europe/Kiev"
 
+LOG_QUERIES = False
+
+if LOG_QUERIES:
+    LOGGING = {
+        "version": 1,
+        "filters": {
+            "require_debug_true": {
+                "()": "django.utils.log.RequireDebugTrue",
+            }
+        },
+        "handlers": {
+            "console": {
+                "level": "DEBUG",
+                "filters": ["require_debug_true"],
+                "class": "logging.StreamHandler",
+            }
+        },
+        "loggers": {
+            "django.db.backends": {
+                "level": "DEBUG",
+                "handlers": ["console"],
+            }
+        },
+    }
+
 # CACHES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches
@@ -25,6 +50,6 @@ CACHES = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-SIMPLE_JWT = {
+NINJA_JWT = {
     "SIGNING_KEY": SECRET_KEY,
 }
