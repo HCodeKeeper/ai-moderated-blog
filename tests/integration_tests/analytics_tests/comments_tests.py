@@ -5,7 +5,7 @@ import pytest
 from analytics.api import CommentsAnalyticsAPI
 from analytics.schemas.analytics import DailyCommentBlockedBreakdownSchema
 from analytics.services.analytics import CommentAnalyticsService
-from tests.conftest import AuthenticatedTestClient
+from tests import AuthenticatedTestClient
 
 
 # Write tests for comments analytics and test its validation
