@@ -2,13 +2,13 @@ version: '3'
 
 services:
 
-  django:
+  django_tests:
     networks:
         - ai_blog_network
     build:
       context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    container_name: django
+      dockerfile: ./compose/local/django/tests.Dockerfile
+    container_name: django_tests
     command: ./compose/local/start_tests
     volumes:
       - .:/ai_blog
@@ -33,11 +33,11 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - ALLOW_IP_RANGE=0.0.0.0/0 # Temporary while fixing pg_hba.conf
       - PGDATA=/var/lib/postgresql/data/pgdata
-    container_name: pgdb
+    container_name: pgdb_test
     env_file:
       - .env
     volumes:
-      - pgdbdata:/var/lib/postgresql/data/
+      - pgdbdata_test:/var/lib/postgresql/data/
       # The container should use the user and group IDs from the host. When we set the owner of /logs to the user "postgres" in the host (via run.sh), the ID of the container's user "postgres" will match.
       # From https://stackoverflow.com/questions/23544282/what-is-the-best-way-to-manage-permissions-for-docker-shared-volumes#45640469
 #      - /etc/passwd:/etc/passwd:ro
@@ -49,7 +49,7 @@ services:
       - '${POSTGRES_PORT}:5432'
 
 volumes:
-  pgdbdata:
+  pgdbdata_test:
 
 networks:
   ai_blog_network:
