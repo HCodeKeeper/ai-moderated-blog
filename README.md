@@ -21,12 +21,15 @@ While developing pre-commits, linters, and formatters were used.
 5. Install postgres
 6. Create a database in postgres named `ai_blog`
 7. Run poetry install in the root directory
-8. Run `poetry run python manage.py migrate`
-9. Run `poetry run python manage.py createsuperuser` to create admin
-10. Run `poetry run python manage.py runserver` to start the server
+8. Start the virtual environment with `poetry shell`
+8. Run `python manage.py migrate`
+9. Run `python manage.py createsuperuser` to create admin
+10. Run `python manage.py runserver` to start the server
 11. Run `redis-server` to start redis server
 12. Run `celery -A api worker --pool solo -l info` in src folder
 13. Ensure that POSTGRES_HOST is set to `localhost` in the .env file
+
+Run tests with `pytest`
 
 ### Docker
 1. Clone the repository

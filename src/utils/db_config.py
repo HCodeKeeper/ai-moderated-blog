@@ -43,7 +43,7 @@ def get_config(env):
         }
     }
 
-    if os.getenv("ENVIRONMENT") == "docker":
+    if env.str("ENVIRONMENT") == "docker":
         return database_docker
     elif os.getenv("ENVIRONMENT") == "gitlab-ci":
         return database_gitlab_ci
