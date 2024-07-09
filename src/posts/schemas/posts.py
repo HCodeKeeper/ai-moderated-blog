@@ -1,8 +1,21 @@
-from ninja import ModelSchema
+from typing import Optional
+
+from ninja import ModelSchema, Schema
 from ninja_schema import model_validator
+from pydantic import field_validator
 
 from posts.models import MAX_TITLE_LENGTH, MIN_TITLE_LENGTH, Post
 from posts.schemas.general import AuthorSchema
+
+
+class AutoReplyConfigSchemaCreate(Schema):
+    delay_secs: int = 0
+
+    @field_validator("delay_secs")
+    def delay_secs_not_negative(cls, v):
+        if v < 0:
+            raise ValueError("Delay must be a positive integer")
+        return v
 
 
 class PostOutSchema(ModelSchema):
@@ -23,6 +36,7 @@ class PostUpdateSchema(ModelSchema):
 
 class PostCreateSchema(ModelSchema):
     author_id: int
+    auto_reply_config: Optional[AutoReplyConfigSchemaCreate] = None
 
     @model_validator("title", check_fields=False)
     def title_length(cls, v):

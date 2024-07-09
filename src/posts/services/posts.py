@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
 from django.contrib.auth import get_user_model
+from django.db import transaction
 
 from posts.exceptions import ContentContainsProfanityError, EntityDoesNotExistError
-from posts.models import Post
+from posts.models import AutoReplyConfig, Post
 from posts.schemas.posts import PostCreateSchema, PostUpdateSchema
 from posts.services.profanity import detect_profanity
 from posts.services.services import AbstractService
@@ -43,7 +44,14 @@ class PostsService(AbstractPostsService):
         if not get_user_model().objects.filter(id=schema.author_id).exists():
             raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id)
 
-        post = Post.objects.create(**schema.dict(), is_blocked=has_profanity)
+        post_dict = schema.dict()
+        auto_reply_dict = post_dict["auto_reply_config"]
+        del post_dict["auto_reply_config"]
+        with transaction.atomic():
+            post = Post.objects.create(**post_dict, is_blocked=has_profanity)
+            if auto_reply_dict:
+                AutoReplyConfig.objects.create(post_id=post.id, delay_secs=auto_reply_dict["delay_secs"])
+
         if has_profanity:
             raise ContentContainsProfanityError()
         return post
