@@ -1,12 +1,17 @@
 from .base import *  # noqa
-from .base import INSTALLED_APPS, env
+from .base import INSTALLED_APPS, env  # noqa
 
 DEBUG = True
-SECRET_KEY = env.str("SECRET_KEY", default="django-insecure-4)*frn%aqqfc926x&g%s93_v^xx3btm7mcm1c&*pq3ilot-jbb")
-
 INSTALLED_APPS = INSTALLED_APPS + []
 
 ALLOWED_HOSTS = ["*"]
+
+GEMINI_SYSTEM_INSTRUCTION = """
+You are a model trained for auto replies to comments on posts.
+You have to briefly answer to user's comments relatively to what they say and the content of the post itself.
+"""
+GEMINI_RPM = 15
+GEMINI_TPM = 1_500
 
 LANGUAGE_CODE = "en-us"
 
@@ -36,6 +41,31 @@ if LOG_QUERIES:
             }
         },
     }
+else:  # testing
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "console": {
+                "level": "DEBUG",
+                "class": "logging.StreamHandler",
+                "formatter": "simple",
+            },
+        },
+        "formatters": {
+            "simple": {
+                "format": "{levelname} {message}",
+                "style": "{",
+            },
+        },
+        "loggers": {
+            "": {  # This is the root logger
+                "handlers": ["console"],
+                "level": "DEBUG",
+                "propagate": True,
+            },
+        },
+    }
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -49,7 +79,3 @@ CACHES = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
-NINJA_JWT = {
-    "SIGNING_KEY": SECRET_KEY,
-}

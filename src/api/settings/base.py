@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from environ import Env
+from google import generativeai as genai
 
 from utils.db_config import get_config
 
@@ -29,6 +31,13 @@ if READ_DOT_ENV_FILE:
     if os.path.exists(env_file_path):
         env.read_env(env_file=env_file_path)
 
+GEMINI_API_KEY = env.str("GEMINI_API_KEY")
+
+genai.configure(api_key=GEMINI_API_KEY)
+
+
+# This configures Redis as the datastore between Django + Celery
+CELERY_BROKER_URL = env.str("CELERY_BROKER", default="redis://localhost:6379")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -143,6 +152,12 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+SECRET_KEY = env.str("SECRET_KEY", default="django-insecure-4)*frn%aqqfc926x&g%s93_v^xx3btm7mcm1c&*pq3ilot-jbb")
+NINJA_JWT = {
+    "SIGNING_KEY": SECRET_KEY,
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}
 
 # Default user model
 AUTH_USER_MODEL = "custom_users.User"

@@ -48,6 +48,7 @@ class Post(BlockableContent):
 
 
 class Comment(BlockableContent):
+    # With this approach, if post gets deleted, statistics for relative comments will be lost
     content = CharField(max_length=500, validators=[MinLengthValidator(MIN_COMMENT_LENGTH)])
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
@@ -96,3 +97,12 @@ class Reply(BlockableContent):
 
     class Meta:
         ordering = ("-created_at",)
+
+
+class AutoReplyConfig(models.Model):
+    post = models.OneToOneField(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    delay_secs = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"Auto reply for {self.post}"

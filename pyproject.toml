@@ -18,6 +18,13 @@ django-ninja-extra = "^0.21.0"
 alt-profanity-check = "^1.5.0"
 ninja-schema = "^0.13.6"
 faker = "^26.0.0"
+celery = "^5.4.0"
+redis = "^5.0.7"
+django-redis = "^5.4.0"
+numpy="1.26.4"
+bert-extractive-summarizer = "^0.10.1"
+torch = "^2.3.1"
+google-generativeai = "^0.7.2"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.7.1"
