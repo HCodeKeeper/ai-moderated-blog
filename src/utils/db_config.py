@@ -26,7 +26,7 @@ def get_config(env):
             "USER": env.str("POSTGRES_USER", default=""),
             "PASSWORD": env.str("POSTGRES_PASSWORD", default=""),
             # Depends on docker-compose.yml
-            "HOST": "postgres_container",
+            "HOST": env.str("POSTGRES_HOST"),
             "PORT": env.str("POSTGRES_PORT", default="5432"),
         }
     }
