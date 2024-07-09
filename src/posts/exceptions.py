@@ -69,6 +69,10 @@ class ContentContainsProfanityError(ValidationError):
 
 
 class EntityDoesNotExistError(ValidationError):
+    """
+    Raised when a related entity in a scheme for example does not exist.
+    """
+
     def __init__(self, entity_name: str, entity_id: id, message=None):
         self.entity_name = entity_name
         self.entity_id = entity_id
