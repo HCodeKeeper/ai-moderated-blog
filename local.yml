@@ -3,22 +3,19 @@ version: '3'
 services:
 
   django:
-    networks:
-        - ai_blog_network
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
     container_name: django
-    command: ./compose/local/start
+    command: ./start
     volumes:
-      - .:/ai_blog
+      - ./src:/ai_blog/src
     ports:
       - '${PORT}:8000'
     environment:
-      - DJANGO_READ_DOT_ENV_FILE=True
+      - DJANGO_SUPERUSER_PASSWORD=1234
+      - DJANGO_READ_DOT_ENV_FILE=false
       - ENVIRONMENT=docker
-    entrypoint:
-        - ./compose/local/entrypoint.sh
     env_file:
       - .env
     depends_on:
@@ -43,14 +40,8 @@ services:
 #      - /etc/passwd:/etc/passwd:ro
 #      - /etc/group:/etc/group:ro
       - ./compose/local/postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
-    networks:
-      - ai_blog_network
     ports:
       - '${POSTGRES_PORT}:5432'
 
 volumes:
   pgdbdata:
-
-networks:
-  ai_blog_network:
-    external: false

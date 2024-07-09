@@ -1,10 +1,6 @@
 FROM python:3.12.4-slim-bookworm
 WORKDIR /ai_blog
 
-COPY src/* ./
-
-COPY requirements.txt ./
-
 ARG BUILD_ENVIRONMENT=local
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -44,6 +40,7 @@ RUN pip install --upgrade pip
 # Copying shell scripts
 COPY ./compose/local/entrypoint.sh ./entrypoint.sh
 COPY ./compose/local/start ./start
+COPY ./compose/local/start_tests ./start_tests
 
 
 RUN sed -i 's/\r$//g' ./entrypoint.sh
@@ -51,3 +48,8 @@ RUN chmod 777 ./entrypoint.sh
 
 RUN sed -i 's/\r$//g' start
 RUN chmod 777 ./start
+
+RUN sed -i 's/\r$//g' start_tests
+RUN chmod 777 ./start_tests
+
+ENTRYPOINT ["./entrypoint.sh"]

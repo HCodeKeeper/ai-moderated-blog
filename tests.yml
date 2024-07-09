@@ -3,28 +3,26 @@ version: '3'
 services:
 
   django_tests:
-    networks:
-        - ai_blog_network
     build:
       context: .
-      dockerfile: ./compose/local/django/tests.Dockerfile
+      dockerfile: ./compose/local/django/Dockerfile
     container_name: django_tests
-    command: ./compose/local/start_tests
+    command: ./start_tests
     volumes:
-      - .:/ai_blog
+      - ./src:/ai_blog/src
+      - ./tests:/ai_blog/tests
     ports:
       - '${PORT}:8000'
     environment:
-      - DJANGO_READ_DOT_ENV_FILE=True
+      - DJANGO_READ_DOT_ENV_FILE=false
       - ENVIRONMENT=docker
-    entrypoint:
-        - ./compose/local/entrypoint.sh
+      - POSTGRES_HOST=pgdb_test
     env_file:
       - .env
     depends_on:
-      - pgdb
+      - pgdb_test
 
-  pgdb:
+  pgdb_test:
     image: postgres
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -43,14 +41,8 @@ services:
 #      - /etc/passwd:/etc/passwd:ro
 #      - /etc/group:/etc/group:ro
       - ./compose/local/postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
-    networks:
-      - ai_blog_network
     ports:
       - '${POSTGRES_PORT}:5432'
 
 volumes:
   pgdbdata_test:
-
-networks:
-  ai_blog_network:
-    external: false

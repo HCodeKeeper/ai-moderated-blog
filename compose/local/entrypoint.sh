@@ -21,7 +21,7 @@ while True:
             user=os.environ["POSTGRES_USER"],
             password=os.environ["POSTGRES_PASSWORD"],
             # Service name in docker compose
-            host="pgdb",
+            host=os.environ["POSTGRES_HOST"],
             port=os.environ["POSTGRES_PORT"],
         )
         break
