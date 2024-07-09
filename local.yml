@@ -20,6 +20,7 @@ services:
       - .env
     depends_on:
       - pgdb
+      - redis
 
   pgdb:
     image: postgres
@@ -42,6 +43,34 @@ services:
       - ./compose/local/postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
     ports:
       - '${POSTGRES_PORT}:5432'
+
+  redis:
+    image: redis:7.0.11-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    command: redis-server --loglevel warning
+
+  workers:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    container_name: 'celery'
+    volumes:
+      - ./src:/ai_blog/src
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - DJANGO_SUPERUSER_PASSWORD=1234
+      - DJANGO_READ_DOT_ENV_FILE=false
+      - ENVIRONMENT=docker
+    env_file:
+      - .env
+    command: sh -c "cd src && celery -A api worker --pool solo -l info"
+    depends_on:
+      - redis
+      - django
+
 
 volumes:
   pgdbdata:
