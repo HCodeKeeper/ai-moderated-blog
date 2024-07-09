@@ -16,6 +16,7 @@ services:
       - '${PORT}:8000'
     environment:
       - DJANGO_READ_DOT_ENV_FILE=True
+      - ENVIRONMENT=docker
     entrypoint:
         - ./compose/local/entrypoint.sh
     env_file:
