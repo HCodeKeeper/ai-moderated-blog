@@ -1,5 +1,15 @@
 # ai-moderated-blog
 
+## Important!
+
+Gemini API doesnt work in Ukrainian region, thus if you want to test out the ai functionality, you need to use a VPN.
+Personally, I used ClearVPN because it gives free premium tier for forever for auth'ing with diia.
+Tested in Turkish region.
+
+The regions with free gemini api tier are listed without ```[1]``` mark here: https://ai.google.dev/gemini-api/docs/available-regions
+
+Keep in mind that response time can be slow due to the reasons described earlier.
+
 ## Table of Contents
 - [Introduction](#introduction)
 - [Setup](#setup):
@@ -35,16 +45,15 @@ Run tests with `pytest`
 1. Clone the repository
 2. Ensure that docker and docker compose are installed
 3. Run `docker-compose -f local.yml up` in the root directory
+4. Run `docker-compose -f tests.yml up` in the root directory to run tests
 
 ## Usage
 Visit `http://localhost:8000/api/docs` to view the API documentation
 
 Most resources (like POST/PUT/DELETE) are protected and require authentication. To authenticate, use /auth/login, copy the access token and insert in Authorize
 
-Admin is created by default if using docker. It's credentials are: admin@gmail.com, 1234
+Admin is created by default if using docker. It's credentials are: ```admin@gmail.com, 1234```
 
 PUT / DELETE requests require the user to be either an admin or the author of the protected subject
 
-Analytics can be run only by an admin, thus login as an admin
-
-**Note**: The project can be slow at startup due to recently added summarization models.
+Analytics can be run only by an admin, thus login as an admin is required
