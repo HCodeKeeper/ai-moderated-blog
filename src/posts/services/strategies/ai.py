@@ -2,12 +2,14 @@ from abc import ABC, abstractmethod
 from logging import getLogger
 
 from google import generativeai as genai
-from summarizer import Summarizer
 
 from api.settings.local import GEMINI_RPM, GEMINI_SYSTEM_INSTRUCTION, GEMINI_TPM
 from posts.models import MAX_COMMENT_LENGTH
 from posts.schemas.comments import CommentOutSchema
 from posts.schemas.posts import PostOutSchema
+
+# from summarizer import Summarizer
+
 
 logger = getLogger(__name__)
 
@@ -43,9 +45,10 @@ class SimpleAICommentLimitationsResolverStrategy(AbstractAICommentsLimitationsRe
 
     @property
     def summarizer(self):
-        if self.__summarizer is None:
-            self.__summarizer = Summarizer()
-        return self.__summarizer
+        pass
+        # if self.__summarizer is None:
+        #     self.__summarizer = Summarizer()
+        # return self.__summarizer
 
     @summarizer.setter
     def summarizer(self, value):
@@ -56,10 +59,10 @@ class SimpleAICommentLimitationsResolverStrategy(AbstractAICommentsLimitationsRe
         Resolves the comment and post length to fit limitations of tpm/rpm giving precedence to comment
         """
         # Naive tokenization considering that the ai model uses tokens as words
-        if len(comment.split()) > self.tokens_per_comment:
-            comment = self.summarizer(comment, max_length=self.tokens_per_comment)
-        if len(post.split()) > self.tokens_per_post:
-            post = self.summarizer(post, max_length=self.tokens_per_post)
+        # if len(comment.split()) > self.tokens_per_comment:
+        #     comment = self.summarizer(comment, max_length=self.tokens_per_comment)
+        # if len(post.split()) > self.tokens_per_post:
+        #     post = self.summarizer(post, max_length=self.tokens_per_post)
         return [comment, post]
 
     def resolve_reply(self, reply: str, max_length: int) -> str:
@@ -67,8 +70,8 @@ class SimpleAICommentLimitationsResolverStrategy(AbstractAICommentsLimitationsRe
         Resolves the reply length to fit the db models limitations
         """
 
-        if len(reply) > max_length:
-            reply = self.summarizer(reply, max_length=max_length)
+        # if len(reply) > max_length:
+        #     reply = self.summarizer(reply, max_length=max_length)
 
         return reply
 

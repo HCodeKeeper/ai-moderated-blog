@@ -22,12 +22,12 @@ def get_config(env):
     database_docker = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": env.str("POSTGRES_DB", default=""),
-            "USER": env.str("POSTGRES_USER", default=""),
-            "PASSWORD": env.str("POSTGRES_PASSWORD", default=""),
+            "NAME": os.getenv("POSTGRES_DB", default=""),
+            "USER": os.getenv("POSTGRES_USER", default=""),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", default=""),
             # Depends on docker-compose.yml
-            "HOST": "postgres_container",
-            "PORT": env.str("POSTGRES_PORT", default="5432"),
+            "HOST": os.getenv("POSTGRES_HOST"),
+            "PORT": os.getenv("POSTGRES_PORT", default="5432"),
         }
     }
 
