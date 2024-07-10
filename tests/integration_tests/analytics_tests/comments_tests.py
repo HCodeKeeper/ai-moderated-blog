@@ -49,7 +49,6 @@ def test_daily_breakdown(admin_client, fill_comments):
 
     # Act
     response = client.get(f"/daily-breakdown?start_date={start_date_str}&end_date={end_date_str}")
-
     # Assert
     assert response.status_code == 200
     result = DailyCommentBlockedBreakdownSchema(**response.json())

@@ -3,7 +3,6 @@ Fixtures
 """
 
 import random
-from datetime import timedelta
 
 import pytest
 from django.utils import timezone
@@ -79,8 +78,8 @@ def fill_comments(generate_posts, random_user):
     all_comments = []
     for post in generate_posts:
         for _ in range(20):
-            created_at = timezone.now() - timedelta(
-                days=random.randint(0, 365), hours=random.randint(0, 23), minutes=random.randint(0, 59)
+            created_at = timezone.make_aware(
+                faker.date_time_this_year(after_now=False), timezone.get_default_timezone()
             )
             comment = Comment(
                 content=faker.text(),
@@ -92,5 +91,4 @@ def fill_comments(generate_posts, random_user):
             comment.save()
 
             all_comments.append(comment)
-
     return all_comments

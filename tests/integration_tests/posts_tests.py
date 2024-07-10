@@ -13,12 +13,11 @@ def test_create_post_with_profanity_in_content(user):
     schema = PostCreateSchema(
         title="Profanity",
         content="This is a post with profanity. Fuck you are so dumb. shit",
-        author_id=user.id,
     )
 
     # Act
     with pytest.raises(ContentContainsProfanityError):
-        blocked_post = service.create(None, schema)
+        blocked_post = service.create(user.id, schema)
         assert blocked_post is not None
         assert blocked_post.is_blocked is True
 
@@ -29,11 +28,10 @@ def test_create_post_with_profanity_in_title(user):
     schema = PostCreateSchema(
         title="How I fucking hate docker, everything runs perfectly but not the entrypoint.",
         content="Probably will stick to copying the whole dir with tests, what can I do",
-        author_id=user.id,
     )
 
     with pytest.raises(ContentContainsProfanityError):
-        blocked_post = service.create(None, schema)
+        blocked_post = service.create(user.id, schema)
 
         assert blocked_post is not None
         assert blocked_post.is_blocked is True
@@ -44,9 +42,9 @@ def test_create_post(user):
     service = PostsService()
     title = "AI-moderated blog"
     text = "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support"
-    schema = PostCreateSchema(title=title, content=text, author_id=user.id)
+    schema = PostCreateSchema(title=title, content=text)
 
-    post = service.create(None, schema)
+    post = service.create(user.id, schema)
     assert post.is_blocked is False
     assert post.title == title
     assert post.content == text
@@ -57,10 +55,8 @@ def test_create_post_with_auto_reply(user):
     service = PostsService()
     title = "AI-moderated blog"
     text = "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support"
-    schema = PostCreateSchema(
-        title=title, content=text, author_id=user.id, auto_reply_config=AutoReplyConfigSchemaCreate(delay_secs=10)
-    )
-    post = service.create(None, schema)
+    schema = PostCreateSchema(title=title, content=text, auto_reply_config=AutoReplyConfigSchemaCreate(delay_secs=10))
+    post = service.create(user.id, schema)
     assert AutoReplyConfig.objects.filter(post_id=post.id, delay_secs=10).exists() is True
 
 
@@ -69,10 +65,10 @@ def test_create_post_with_invalid_author_excepts():
     service = PostsService()
     title = "AI-moderated blog"
     text = "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support"
-    schema = PostCreateSchema(title=title, content=text, author_id=0)
+    schema = PostCreateSchema(title=title, content=text)
 
     with pytest.raises(EntityDoesNotExistError):
-        service.create(None, schema)
+        service.create(0, schema)
 
 
 @pytest.mark.django_db
@@ -80,9 +76,9 @@ def test_update_post(user):
     service = PostsService()
     title = "AI-moderated blog"
     text = "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support"
-    schema = PostCreateSchema(title=title, content=text, author_id=user.id)
+    schema = PostCreateSchema(title=title, content=text)
 
-    post = service.create(None, schema)
+    post = service.create(user.id, schema)
     new_title = "AI-moderated blog with AI-generated content"
     new_text = (
         "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support. "
@@ -101,9 +97,9 @@ def test_update_post_with_profanity_in_title(user):
     service = PostsService()
     title = "AI-moderated blog"
     text = "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support"
-    schema = PostCreateSchema(title=title, content=text, author_id=user.id)
+    schema = PostCreateSchema(title=title, content=text)
 
-    post = service.create(None, schema)
+    post = service.create(user.id, schema)
     profanity_title = "Stupid shit of stupid shit, fuck"
     schema = PostUpdateSchema(
         title=profanity_title,
