@@ -18,7 +18,7 @@ def test_create_post_with_profanity_in_content(user):
 
     # Act
     with pytest.raises(ContentContainsProfanityError):
-        blocked_post = service.create(schema)
+        blocked_post = service.create(None, schema)
         assert blocked_post is not None
         assert blocked_post.is_blocked is True
 
@@ -33,7 +33,7 @@ def test_create_post_with_profanity_in_title(user):
     )
 
     with pytest.raises(ContentContainsProfanityError):
-        blocked_post = service.create(schema)
+        blocked_post = service.create(None, schema)
 
         assert blocked_post is not None
         assert blocked_post.is_blocked is True
@@ -46,7 +46,7 @@ def test_create_post(user):
     text = "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support"
     schema = PostCreateSchema(title=title, content=text, author_id=user.id)
 
-    post = service.create(schema)
+    post = service.create(None, schema)
     assert post.is_blocked is False
     assert post.title == title
     assert post.content == text
@@ -60,7 +60,7 @@ def test_create_post_with_auto_reply(user):
     schema = PostCreateSchema(
         title=title, content=text, author_id=user.id, auto_reply_config=AutoReplyConfigSchemaCreate(delay_secs=10)
     )
-    post = service.create(schema)
+    post = service.create(None, schema)
     assert AutoReplyConfig.objects.filter(post_id=post.id, delay_secs=10).exists() is True
 
 
@@ -72,7 +72,7 @@ def test_create_post_with_invalid_author_excepts():
     schema = PostCreateSchema(title=title, content=text, author_id=0)
 
     with pytest.raises(EntityDoesNotExistError):
-        service.create(schema)
+        service.create(None, schema)
 
 
 @pytest.mark.django_db
@@ -82,7 +82,7 @@ def test_update_post(user):
     text = "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support"
     schema = PostCreateSchema(title=title, content=text, author_id=user.id)
 
-    post = service.create(schema)
+    post = service.create(None, schema)
     new_title = "AI-moderated blog with AI-generated content"
     new_text = (
         "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support. "
@@ -103,7 +103,7 @@ def test_update_post_with_profanity_in_title(user):
     text = "Unfortunately, had to download a vpn and turn on turkish region to enable gemini api support"
     schema = PostCreateSchema(title=title, content=text, author_id=user.id)
 
-    post = service.create(schema)
+    post = service.create(None, schema)
     profanity_title = "Stupid shit of stupid shit, fuck"
     schema = PostUpdateSchema(
         title=profanity_title,

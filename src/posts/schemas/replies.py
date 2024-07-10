@@ -1,7 +1,7 @@
 from typing import Optional
 
 from ninja import ModelSchema, Schema
-from pydantic import field_validator
+from pydantic import Field, field_validator
 
 from posts.models import Reply
 
@@ -24,9 +24,8 @@ class ReplyOutSchema(ModelSchema):
 
 
 class ReplyCreateSchema(Schema):
-    author_id: int
-    comment_id: int
-    parent_reply_id: Optional[int] = None
+    comment_id: int = Field(ge=1)
+    parent_reply_id: Optional[int] = Field(None, ge=1)
     content: str
 
     @field_validator("content", check_fields=False)
@@ -47,5 +46,5 @@ class ReplyUpdateSchema(Schema):
 
 
 class AIReplyCreateSchema(Schema):
-    comment_id: int
+    comment_id: int = Field(ge=1)
     content: str
