@@ -35,7 +35,6 @@ class PostUpdateSchema(ModelSchema):
 
 
 class PostCreateSchema(ModelSchema):
-    author_id: int
     auto_reply_config: Optional[AutoReplyConfigSchemaCreate] = None
 
     @model_validator("title", check_fields=False)

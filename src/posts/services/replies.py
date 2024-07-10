@@ -74,15 +74,15 @@ class RepliesService(AbstractRepliesService):
     def get_inactive(self, _id: int):
         return Reply.objects.get(id=_id, is_blocked=True)
 
-    def create(self, schema: ReplyCreateSchema):
+    def create(self, _id, schema: ReplyCreateSchema):
         validate_comment_length(schema.content)
         has_profanity = detect_profanity([schema.content])
 
         if not Comment.objects.filter(id=schema.comment_id, is_blocked=False).exists():
             raise EntityDoesNotExistError(entity_name="Comment", entity_id=schema.comment_id)
 
-        if not get_user_model().objects.filter(id=schema.author_id).exists():
-            raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id)
+        if not get_user_model().objects.filter(id=_id).exists():
+            raise EntityDoesNotExistError(entity_name="Author", entity_id=_id)
 
         if schema.parent_reply_id:
             if not Reply.objects.filter(id=schema.parent_reply_id, is_blocked=False).exists():
@@ -90,7 +90,7 @@ class RepliesService(AbstractRepliesService):
 
         reply = Reply.objects.create(
             comment_id=schema.comment_id,
-            author_id=schema.author_id,
+            author_id=_id,
             content=schema.content,
             is_blocked=has_profanity,
             parent_reply_id=schema.parent_reply_id,

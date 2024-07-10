@@ -37,18 +37,18 @@ class PostsService(AbstractPostsService):
     def get_inactive(self, _id: int):
         return Post.objects.get(id=_id, is_blocked=True)
 
-    def create(self, schema: PostCreateSchema):
+    def create(self, _id, schema: PostCreateSchema):
         validate_post_title(schema.title)
         has_profanity = detect_profanity([schema.title, schema.content])
 
-        if not get_user_model().objects.filter(id=schema.author_id).exists():
-            raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id)
+        if not get_user_model().objects.filter(id=_id).exists():
+            raise EntityDoesNotExistError(entity_name="Author", entity_id=_id)
 
         post_dict = schema.dict()
         auto_reply_dict = post_dict["auto_reply_config"]
         del post_dict["auto_reply_config"]
         with transaction.atomic():
-            post = Post.objects.create(**post_dict, is_blocked=has_profanity)
+            post = Post.objects.create(author_id=_id, **post_dict, is_blocked=has_profanity)
             if auto_reply_dict:
                 AutoReplyConfig.objects.create(post_id=post.id, delay_secs=auto_reply_dict["delay_secs"])
 

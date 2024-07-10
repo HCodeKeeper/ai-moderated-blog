@@ -50,10 +50,11 @@ Run tests with `pytest`
 ## Usage
 Visit `http://localhost:8000/api/docs` to view the API documentation
 
-Most resources (like POST/PUT/DELETE) are protected and require authentication. To authenticate, use /auth/login, copy the access token and insert in Authorize
+- Most resources (like POST/PUT/DELETE) are protected and require authentication. To authenticate, use /auth/login, copy the access token and insert in Authorize
 
-Admin is created by default if using docker. It's credentials are: ```admin@gmail.com, 1234```
+- Admin is created by default if using docker. It's credentials are: ```admin@gmail.com, 1234```
 
-PUT / DELETE requests require the user to be either an admin or the author of the protected subject
+- PUT / DELETE requests require the user to be either an admin or the author of the protected subject
 
-Analytics can be run only by an admin, thus login as an admin is required
+- Analytics can be run only by an admin, thus login as an admin is required
+- You can see request schemas at the bottom of the page, they describe which fields are required and which are not. If the field is not required, you can simply delete it from try request or set to null.
