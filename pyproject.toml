@@ -1,0 +1,68 @@
+[tool.poetry]
+name = "ai-moderated-blog"
+version = "0.1.0"
+description = ""
+authors = ["HCodeKeeper <ivannikovmax04@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.0.6"
+django-ninja = "^1.2.0"
+django-environ = "^0.11.2"
+django-cors-headers = "^4.4.0"
+psycopg2 = "^2.9.9"
+django-ninja-jwt = "^5.3.1"
+django-ninja-extra = "^0.21.0"
+alt-profanity-check = "^1.5.0"
+ninja-schema = "^0.13.6"
+faker = "^26.0.0"
+celery = "^5.4.0"
+redis = "^5.0.7"
+django-redis = "^5.4.0"
+google-generativeai = "^0.7.2"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.7.1"
+commitizen = "^3.27.0"
+black = "^24.4.2"
+isort = "^5.13.2"
+flake8 = "^7.1.0"
+bandit = "^1.7.9"
+coverage = "^7.5.4"
+pytest-django = "^4.8.0"
+flake8-pyproject = "^1.2.3"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.2.2"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = 'src.api.settings.local'
+python_files = ['tests.py', 'test_*.py', '*_tests.py']
+pythonpath = '. src'
+filterwarnings = [
+    "ignore::DeprecationWarning:pydantic.*:",
+    "ignore::DeprecationWarning:ninja.orm.metaclass:90"
+]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version = "0.2.0a19"
+version_scheme = "pep440"
+version_provider = "poetry"
+major_version_zero = true
+version_files = ["pyproject.toml:version"]
+
+[tool.flake8]
+exclude = [
+    "*/migrations/*",
+]
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

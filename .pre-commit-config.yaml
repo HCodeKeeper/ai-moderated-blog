@@ -1,0 +1,76 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        stages: [pre-commit, pre-push]
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        description: "Library to sort imports alphabetically, and automatically separated into sections and by type"
+        entry: isort
+        args: [--line-length=120]
+        language: system
+        stages: [pre-commit, pre-push]
+
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        description: "Black: The uncompromising Python code formatter"
+        entry: black
+        types: [python]
+        args: [--line-length=120]
+        language: system
+        stages: [pre-commit, pre-push]
+
+  - repo: local
+    hooks:
+      - id: flake8
+        name: flake8
+        description: '`flake8` is a command-line utility for enforcing style consistency across Python projects'
+        entry: flake8
+        types: [python]
+        args: [--max-line-length=120]
+        language: system
+        stages: [pre-commit, pre-push]
+        fail_fast: true
+
+  - repo: local
+    hooks:
+      - id: bandit
+        name: bandit
+        description: 'Bandit is a tool for finding common security issues in Python code'
+        entry: bandit
+        language: system
+        stages: [pre-commit, pre-push]
+        fail_fast: true
+        args: ['-x', 'tests']
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run tests
+        entry: pytest
+        language: system
+        args: ['-p no:warnings']
+        verbose: true
+        pass_filenames: false
+        stages: [pre-push]
+        fail_fast: true
+
+  - repo: local
+    hooks:
+      - id: commitizen
+        name: My commitizen
+        description: "Commitizen - a tool for following commit rules"
+        entry: cz
+        args: ['check', '--commit-msg-file', '.git/COMMIT_EDITMSG']
+        pass_filenames: false
+        stages: [commit-msg]
+        language: system
