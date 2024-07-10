@@ -700,13 +700,13 @@ testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
 name = "django-ninja"
-version = "1.2.0"
+version = "1.2.1"
 description = "Django Ninja - Fast Django REST framework"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_ninja-1.2.0-py3-none-any.whl", hash = "sha256:aa8ca853bf189cc13247b1922ca41f1a6e60056c90041ec0081cce0ea8d8de02"},
-    {file = "django_ninja-1.2.0.tar.gz", hash = "sha256:0a7b7e20202f50546ae45af6a262fccb606c9e75b8bbe9fe38d49075a9435bf0"},
+    {file = "django_ninja-1.2.1-py3-none-any.whl", hash = "sha256:acb7a0005e84acdb0ae96066c42c7f304f988a078d370e5952382b928bb28a08"},
+    {file = "django_ninja-1.2.1.tar.gz", hash = "sha256:667ff27304039d4692421709ae532fd62b16a4d34a969ef850d5cd22cb46090a"},
 ]
 
 [package.dependencies]
@@ -720,20 +720,20 @@ test = ["django-stubs", "mypy (==1.7.1)", "psycopg2-binary", "pytest", "pytest-a
 
 [[package]]
 name = "django-ninja-extra"
-version = "0.21.0"
+version = "0.21.1"
 description = "Django Ninja Extra - Class Based Utility and more for Django Ninja(Fast Django REST framework)"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_ninja_extra-0.21.0-py3-none-any.whl", hash = "sha256:9364760cbe0e3d80696ce0cfd07742139957bb4267813cb86643e7ce00779a8e"},
-    {file = "django_ninja_extra-0.21.0.tar.gz", hash = "sha256:c8cb2ca620bed132075b5858ed1ce9f71969ec4ffab6e0e8a58098d613a9dc39"},
+    {file = "django_ninja_extra-0.21.1-py3-none-any.whl", hash = "sha256:331cdf9cbeb8a122a8192c35ac1fba373b0736f4d91d75bc2d39fd0e8d8a66ea"},
+    {file = "django_ninja_extra-0.21.1.tar.gz", hash = "sha256:7e0de377c2afd0d4b6655e01901bb8c370c04ffdf5471a17b14e8db0d1002e8e"},
 ]
 
 [package.dependencies]
 asgiref = "*"
 contextlib2 = "*"
 Django = ">=2.2"
-django-ninja = "1.2.0"
+django-ninja = "1.2.1"
 injector = ">=0.19.0"
 
 [[package]]

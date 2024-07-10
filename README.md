@@ -50,6 +50,8 @@ Run tests with `pytest`
 ## Usage
 Visit `http://localhost:8000/api/docs` to view the API documentation
 
+local.yml will prepopulate the database for you.
+
 Most resources (like POST/PUT/DELETE) are protected and require authentication. To authenticate, use /auth/login, copy the access token and insert in Authorize
 
 Admin is created by default if using docker. It's credentials are: ```admin@gmail.com, 1234```

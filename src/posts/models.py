@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models.fields import CharField, DateTimeField, TextField
+from django.utils import timezone
 
 from posts.exceptions import (
     AnonymousReplyError,
@@ -26,7 +27,7 @@ class BlockableContent(models.Model):
 class Post(BlockableContent):
     title = CharField(max_length=MAX_TITLE_LENGTH, validators=[MinLengthValidator(MIN_TITLE_LENGTH)])
     content = TextField()
-    created_at = DateTimeField(auto_now_add=True)
+    created_at = DateTimeField(default=timezone.now)
     updated_at = DateTimeField(auto_now=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True)
 
@@ -50,7 +51,7 @@ class Post(BlockableContent):
 class Comment(BlockableContent):
     # With this approach, if post gets deleted, statistics for relative comments will be lost
     content = CharField(max_length=500, validators=[MinLengthValidator(MIN_COMMENT_LENGTH)])
-    created_at = DateTimeField(auto_now_add=True)
+    created_at = DateTimeField(default=timezone.now)
     updated_at = DateTimeField(auto_now=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True)
@@ -73,11 +74,11 @@ class Comment(BlockableContent):
 
 class Reply(BlockableContent):
     content = models.TextField(validators=[MinLengthValidator(MIN_COMMENT_LENGTH)])
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     comment = models.ForeignKey("Comment", on_delete=models.CASCADE, related_name="replies")
     parent_reply = models.ForeignKey(
-        "self", on_delete=models.CASCADE, related_name="child_replies", null=True, blank=True
+        "self", on_delete=models.SET_NULL, related_name="child_replies", null=True, blank=True
     )
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
     is_ai_generated = models.BooleanField(default=False)
@@ -101,7 +102,7 @@ class Reply(BlockableContent):
 
 class AutoReplyConfig(models.Model):
     post = models.OneToOneField(Post, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     delay_secs = models.PositiveIntegerField(default=0)
 
     def __str__(self):

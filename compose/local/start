@@ -11,5 +11,6 @@ python src/manage.py migrate
 } || {
   echo "User: admin@gmail.com | 1234 (see local.yml env var) Already exists"
 }
+python src/manage.py prepopulate --dont-repeat
 python src/manage.py collectstatic --noinput
 exec python src/manage.py runserver 0.0.0.0:8000
