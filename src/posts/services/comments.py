@@ -75,18 +75,18 @@ class CommentsService(AbstractCommentsService):
     def get_inactive(self, _id: int):
         return Comment.objects.get(id=_id, is_blocked=True)
 
-    def create(self, schema: CommentCreateSchema):
+    def create(self, _id, schema: CommentCreateSchema):
         validate_comment_length(schema.content)
         has_profanity = detect_profanity([schema.content])
 
         if not Post.objects.filter(id=schema.post_id, is_blocked=False).exists():
             raise EntityDoesNotExistError(entity_name="Post", entity_id=schema.post_id)
 
-        if not get_user_model().objects.filter(id=schema.author_id).exists():
-            raise EntityDoesNotExistError(entity_name="Author", entity_id=schema.author_id)
+        if not get_user_model().objects.filter(id=_id).exists():
+            raise EntityDoesNotExistError(entity_name="Author", entity_id=_id)
 
         comment = Comment.objects.create(
-            post_id=schema.post_id, author_id=schema.author_id, content=schema.content, is_blocked=has_profanity
+            post_id=schema.post_id, author_id=_id, content=schema.content, is_blocked=has_profanity
         )
         if has_profanity:
             raise ContentContainsProfanityError()

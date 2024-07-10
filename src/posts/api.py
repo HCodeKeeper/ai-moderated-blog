@@ -68,9 +68,9 @@ class PostsController(ControllerBase):
         },
         auth=JWTAuth(),
     )
-    def create_post(self, data: PostCreateSchema):
+    def create_post(self, request, data: PostCreateSchema):
         try:
-            return self.posts_service.create(data)
+            return self.posts_service.create(request.user.id, data)
         except InvalidTitleLengthError as e:
             InvalidRequestBodyError(detail=e.message)
         except ContentContainsProfanityError as e:
@@ -168,9 +168,9 @@ class CommentsController(ControllerBase):
         },
         auth=JWTAuth(),
     )
-    def create_comment(self, data: CommentCreateSchema):
+    def create_comment(self, request, data: CommentCreateSchema):
         try:
-            return self.comments_service.create(data)
+            return self.comments_service.create(request.user.id, data)
         except ContentContainsProfanityError as e:
             raise ContentContainsProfanityAPIError() from e
         except EntityDoesNotExistError as e:
@@ -273,9 +273,9 @@ class RepliesController(ControllerBase):
         },
         auth=JWTAuth(),
     )
-    def create_reply(self, data: ReplyCreateSchema):
+    def create_reply(self, request, data: ReplyCreateSchema):
         try:
-            return self.replies_service.create(data)
+            return self.replies_service.create(request.user.id, data)
         except ContentContainsProfanityError as e:
             raise ContentContainsProfanityAPIError() from e
         except EntityDoesNotExistError as e:

@@ -11,7 +11,7 @@ class AbstractService(ABC):
         pass
 
     @abstractmethod
-    def create(self, schema):
+    def create(self, _id, schema):
         pass
 
     @abstractmethod

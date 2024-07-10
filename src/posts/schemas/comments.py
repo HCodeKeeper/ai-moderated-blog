@@ -1,6 +1,6 @@
 from ninja import ModelSchema
 from ninja_schema import Schema
-from pydantic import field_validator
+from pydantic import Field, field_validator
 
 from posts.exceptions import InvalidContentLengthError
 from posts.models import Comment
@@ -17,8 +17,7 @@ class CommentOutSchema(ModelSchema):
 
 
 class CommentCreateSchema(Schema):
-    author_id: int
-    post_id: int
+    post_id: int = Field(ge=1)
     content: str
 
     @field_validator("content", check_fields=False)
